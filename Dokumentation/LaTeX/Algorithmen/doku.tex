@@ -1,0 +1,95 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{pdfpages}
+\usepackage{ngerman}
+\usepackage{algorithmic}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+
+\renewcommand{\sectionmark}[1]{\markboth{\thesection\ #1}{}}
+\lhead[ \leftmark   ]{\textbf{ATM}}
+\rhead[]{Kai Fabian, Stefan Hansch, Dominik Moritz, Matthias Springer}
+\cfoot[\thepage]{\thepage}
+
+\begin{document}
+\begin{titlepage}
+\author{Kai Fabian\\Hasso-Plattner-Institut, IT-Systems Engineering, 1. Semester\\\texttt{Kai.Fabian@student.hpi.uni-potsdam.de} 
+\and Stefan Hansch\\FH Regensburg, Medizinische Informatik, 1. Semester\\\texttt{Stefan.Hansch@stud.hs-regensburg.de} 
+\and Dominik Moritz\\Hasso-Plattner-Institut, IT-Systems Engineering, 1. Semester\\\texttt{Dominik.Moritz@student.hpi.uni-potsdam.de}
+\and Matthias Springer\\Hasso-Plattner-Institut, IT-Systems Engineering, 1. Semester\\\texttt{Matthias.Springer@student.hpi.uni-potsdam.de}}
+
+\title{ATM\\informatiCup Aufgabe 3}
+
+\date{\today}
+\maketitle
+\end{titlepage}
+\pagestyle{fancy}
+\tableofcontents
+
+\input{Einfuehrung/einfuehrung}
+\input{Anleitungen/installationsanleitung}
+\input{Anleitungen/bedienungsanleitung}
+\input{Datenstruktur/datenstruktur}
+\input{Programmablauf/programmablauf}
+\input{Algorithmen/algorithmen}
+\input{GUI/gui}
+
+\section{Beispielausgaben}
+\subsection{Tabu-Suche auf zuf"alliger Verteilung mit sehr vielen Automaten (\texttt{hatfield.txt}, 240 Automaten, 50000 Iterationen, Ver"anderungen durch den Algorithmus)}
+\includegraphics[width=1.0\textwidth]{1.pdf}
+\includegraphics[width=1.0\textwidth]{2.pdf}
+\includegraphics[width=1.0\textwidth]{3.pdf}
+\includegraphics[width=1.0\textwidth]{4.pdf}
+\includegraphics[width=1.0\textwidth]{5.pdf}
+\includegraphics[width=1.0\textwidth]{6.pdf}
+\includegraphics[width=1.0\textwidth]{7.pdf}
+\includegraphics[width=1.0\textwidth]{8.pdf}
+\includegraphics[width=1.0\textwidth]{9.pdf}
+\includegraphics[width=1.0\textwidth]{10.pdf}
+\includegraphics[width=1.0\textwidth]{11.pdf}
+\includegraphics[width=1.0\textwidth]{12.pdf}
+
+\subsection{Greedy-Algorithmus (\texttt{example.txt}, 8 Automaten)}
+\includegraphics[width=1.0\textwidth]{ex1_gr.pdf}
+
+\subsection{Greedy-Algorithmus und Simulierte Abk"uhlung (\texttt{example.txt}, 8 Automaten, T=1000)}
+\includegraphics[width=1.0\textwidth]{ex1_gr.pdf}
+
+\subsection{Greedy-Algorithmus und alle Optimierungsverfahren (\texttt{germiston.txt}, T=1000, 2500 Iterationen)}
+\includegraphics[width=1.0\textwidth]{ger.pdf}
+
+\subsection{Greedy-Algorithmus und alle Optimierungsverfahren (\texttt{soweto.txt}, T=1000, 2500 Iterationen)}
+\includegraphics[width=1.0\textwidth]{soweto.pdf}
+
+\subsection{Greedy-Algorithmus und alle Optimierungsverfahren (\texttt{hatfield.txt}, T=2500, 5000 Iterationen)}
+\includegraphics[width=1.0\textwidth]{hatfield_allles.pdf}
+
+\subsection{Greedy-Algorithmus (\texttt{crazy.txt})}
+\includegraphics[width=1.0\textwidth]{crazy.pdf}
+
+\subsection{Greedy-Algorithmus und alle Optimierungsverfahren (\texttt{crazy.txt}, T=1000, 2500 Iterationen)}
+\includegraphics[width=1.0\textwidth]{crazy_alles.pdf}
+
+\subsection{Greedy-Algorithmus (\texttt{crazy500.txt}, 500 Automaten)}
+\includegraphics[width=1.0\textwidth]{crazy500.pdf}
+
+\subsection{Greedy-Algorithmus (\texttt{crazy15.txt}, 15 Automaten)}
+\includegraphics[width=1.0\textwidth]{crazy15.pdf}
+
+\subsection{Greedy-Algorithmus und alle Optimierungsverfahren (\texttt{crazy15.txt}, 15 Automaten, T=1000, 2500 Iterationen)}
+\includegraphics[width=1.0\textwidth]{crazy15_alles.pdf}
+
+\subsection{Greedy-Algorithmus (\texttt{berlin\_50.txt}, 50 Automaten)}
+\includegraphics[width=1.0\textwidth]{berlin50_greedy.pdf}
+
+\subsection{Greedy-Algorithmus und alle Optimierungsverfahren (\texttt{berlin\_50.txt}, 50 Automaten, T=5000, 7500 Iterationen)}
+\includegraphics[width=1.0\textwidth]{berlin50_alles.pdf}
+
+\subsection{Greedy-Algorithmus (\texttt{berlin\_580.txt}, 580 Automaten)}
+\includegraphics[width=1.0\textwidth]{berlin580_greedy.pdf}
+
+\subsection{Greedy-Algorithmus (\texttt{eigene.txt})}
+\includegraphics[width=1.0\textwidth]{eigene_greedy.pdf}
+
+\subsection{Greedy-Algorithmus und alle Optimierungsverfahren (\texttt{eigene.txt}, T=1000, 2500 Iterationen)}
+\includegraphics[width=1.0\textwidth]{eigene_alles.pdf}
+\end{document}

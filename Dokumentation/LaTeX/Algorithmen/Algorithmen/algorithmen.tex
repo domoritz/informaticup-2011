@@ -1,0 +1,249 @@
+\section{Algorithmen}
+\subsection{Modularer Aufbau}
+Aufgrund einer Vielzahl von m"oglichen Algorithmen, haben wir uns dazu entschlossen, eine vom Algorithmus unabh"angige Datenstruktur und Benutzeroberfl"ache zu entwerfen. Diese Datenstruktur erm"oglicht es, viele Algorithmen zu testen und somit den \emph{besten} Algorithmus zu finden. Hinzu kommt, dass durch viele Algorithmen auch Spezialf"alle leichter betrachtet werden k"onnen.
+
+\subsection{G"ute einer L"osung}
+Bei dem gegebenen Problem, Automaten m"oglichst effizient auf einer Landkarte zu verteilen, handelt es sich um ein Optimierungsproblem. Damit eine L"osung als g"ultig (zul"assig) klassifiziert wird, m"ussen die folgenden Kriterien erf"ullt sein.
+\begin{itemize}
+\item Es m"ussen alle Automaten auf der Landkarte platziert sein.
+\item Jeder Automat muss auf der Landkarte und darf nicht au"serhalb der Karte platziert sein.
+\item Die Bereiche (Kreise) der Automaten d"urfen sich nicht "uberschneiden.
+\end{itemize}
+F"ur g"ultige L"osungen kann dann die \emph{G"ute} berechnet werden. Je h"oher dieser Wert ist, desto besser ist die L"osung (Maximierungsproblem). Jedem Pixel wurde zuvor bereits ein Gewicht zugewiesen. Die G"ute einer L"osung ergibt sich aus der Summe der Gewichte aller Pixel, an denen sich ein Automat befindet. Da die einzelnen Pixel in der Pixelkarte bereits Gewichtswerte enthalten, die durch die Anzahl der Pixel im Stadtteil geteilt wurden, ergibt sich eine anteilsm"a"sige der G"ute an den Stadtteilen. Wenn ein Stadtteil von einem Automaten nur zu 40 Prozent abgedeckt wird, gibt es f"ur diesen Automaten nur 40 Prozent der Bewertung des Stadtteiles.
+
+\subsection{Brute-Force-Suche}
+Eine erste Idee war ein Brute-Force-Algorithmus. Das w"urde in unserem Programm bedeuten, dass jeder einzelne Punkt der Karte auf seinen Automatenwert untersucht wird. Ein solcher Algorithmus w"urde zu einer optimalen L"osung f"uhren. Allerdings ist dieser Algorithmus nicht performant genug. 
+
+Wenn man annimmt, dass die Landkarte aus \(p\) Pixel besteht, so gibt es f"ur jeden Automaten \(p\) M"oglichkeiten, ihn zu platzieren. Nat"urlich d"urfen sich die Automatenradius nicht "uberschneiden, sodass sich etwas weniger m"ogliche Positionen ergeben. Da die abgedeckte Fl"ache eines Automaten aber in der Regel viel kleiner als die Landkarte ist, kann man diesen Effekt bei der Laufzeitbetrachtung vernachl"assigen. Sollen \(a\) Automaten platziert werden, ergeben sich \(\mathcal{O}(p^a)\) m"ogliche Zust"ande (exponentielle Laufzeit), die "uberpr"uft werden m"ussen. Mit einem Zustand eine m"ogliche Platzierung aller \(a\) Automaten gemeint.  Bereits bei \(a=2\) Automaten k"onnen die vorgegebenen Beispieleingaben nicht mehr in sinnvoller Zeit berechnet werden. 
+
+\subsection{Zuf"allige Verteilung der Automaten}
+Vor allem als Er"offnungsverfahren f"ur Metaheuristiken kann es interessant sein, eine zuf"allige g"ultige L"osung zu erzeugen. Dabei werden einfach alle Automaten per Zufall auf der Karte verteilt, wobei sich Automaten nicht "uberschneiden d"urfen. Der Algorithmus befindet sich in der Klasse \texttt{al"-go"-rith"-men."-Zu"-fall} und die Laufzeit h"angt quadratisch von der Anzahl der Automaten ab, da f"ur jeden Automaten "uberpr"uft werden muss, ob er sich mit irgendeinem anderen Automaten "uberschneidet. 
+
+\subsection{Heuristiken}
+Heuristiken bezeichnen in der Informatik solche Vorgehensweisen, bei denen ein Kompromiss zwischen dem Rechenaufwand und der G"ute der gefundenen L"osung eingangen wird. Mit sehr gro"ser Wahrscheinlichkeit findet die Heuristik also nicht die/eine optimale L"osung, daf"ur wird versucht, eine gute Ann"aherung in akzeptabler Zeit zu ermitteln. 
+
+\subsubsection{Greedy-Algorithmus mit vollst"andiger Suche}
+\paragraph{Grundprinzip}
+Der Greedy-Algorithmus (engl. \emph{greedy} = gierig) w"ahlt zu jedem Zeitpunkt den Schritt, der momentan am meisten Erfolg verspricht. Dieses Verfahren f"uhrt in der Regel nicht dazu, dass eine optimale L"osung gefunden wird. Ebenso kann nicht garantiert werden, dass die gefundene L"osung eine bestimmte Mindestg"ute aufweist, die gefundene L"osung kann beliebig schlecht sein. Andererseits funktioniert das Verfahren relativ schnell. 
+
+\paragraph{Pseudocode}
+Der Algorithmus geht bei der Berechnung nach folgendem Prinzip vor.
+
+\begin{algorithmic}
+\FOR{$i = 1$ \TO Automaten}
+	\STATE Beste Position $\gets -1$
+	\FOR{$x = 1$ \TO $max_x$}
+		\FOR{$y = 1$ \TO $max_y$}
+			\IF{Bewertung(x, y) $>$ Beste Position}
+				\STATE Beste Position $\gets$ Bewertung(x, y)
+				\STATE best$_x$ $\gets x$
+				\STATE best$_y$ $\gets y$
+			\ENDIF
+		\ENDFOR
+	\ENDFOR
+	\STATE Setzte Automat(best$_x$, best$_y$)
+\ENDFOR
+\RETURN best$_x$, best$_y$
+\end{algorithmic}
+Der erste Schritt besteht darin, den Pixel mit dem maximalen Gewicht zu finden. Hat man diesen gefunden, platziert man an dieser Stelle den ersten Automaten. Dieser Schritt wird nun so lange wiederholt, bis alle Automaten platziert wurden. Es muss jedoch darauf geachtet werden, dass sich die Automatenkreise nicht "uberschneiden. Bevor ein Automat platziert wird, muss deshalb sichergestellt sein, dass der Abstand zu jedem anderen Automaten mindestens den doppelten Automatenradius betr"agt\footnote{Diese "Uberpr"ufung auf G"ultigkeit fehlt der "Ubersicht halber im Pseudocode.}. Im allgemeinen kann der erste Pixel der Landkarte, anders als im Pseudocode angegeben, auch eine andere Koordinate als \((1|1)\) aufweisen. 
+
+\paragraph{Laufzeitkomplexit"at}
+Besteht die Landkarte aus \(p = \mbox{max}_x \cdot \mbox{max}_y\) Pixeln, so m"ussen f"ur jeden Automaten \(p\) Pixel untersucht werden. F"ur jeden interessanten Pixel muss nun noch der Abstand zu allen anderen Pixel "uberpr"uft werden. Sollen \(a\) Automaten platziert werden, sind \(\theta(a \cdot p)\) Vergleiche der Pixelgewichte und \(\mathcal{O}(a^2 \cdot p)\) Abstandsberechnungen notwendig. Normalerweise ist \(a\) im Gegensatz zu \(p\) sehr klein und kann vernachl"assigt werden.
+
+\paragraph{Programm-Dokumentation}
+Der Greedy-Algorithmus befindet sich in der Klasse \texttt{al"-go"-rith"-men."-Greedy} und implementiert das Interface \texttt{in"-for"-ma"-ti"-cup."-Al"-go"-rith"-mus}. Der eigentliche Algorithmus startet, wenn die Methode \texttt{Be"-rech"-ne} aufgerufen wird. Die Methode \texttt{Setze"-Naechsten"-Au"-to"-ma"-ten} platziert den n"achsten Automaten und verwendet dazu die Methode \texttt{Fin"-de"-Bes"-te"-Po"-si"-ti"-on"-Voll"-staen"-dige"-Suche}, die "uber alle Pixel iteriert. Die Funktion \texttt{Punkt"-Zu"-laess"-ig} ermittelt, ob an der angegebenen Position ein Automat platziert werden darf, indem der Abstand zu allen bereits gesetzten Automaten berechnet wird.
+
+\subsubsection{Greedy-Algorithmus mit Stichproben-Suche}
+\paragraph{Grundprinzip}
+Der vorgestellte Algorithmus kann beschleunigt werden, wenn nicht alle Pixel auf ihr Gewicht "uberpr"uft werden. Stattdessen wird die Karte horizontal oder vertikal in zwei gleich gro"se Teile (Kartenausschnitte) aufgeteilt. Dann wird aus beiden Teilen eine Stichprobe von \(s\) Pixeln entnommen. F"ur jeden Teil werden die Gewichte der ausgew"ahlten Pixel aufsummiert. Dann wird der Teil mit der gr"o"seren Summe erneut aufgeteilt. Eine horizontale Teilung erfolgt, wenn der betrachtete Kartenausschnitt eine gr"o"sere Breite als H"ohe aufweist. Ansonsten wird vertikal geteilt. Wenn ein Kartenausschnitt aus nur noch einem Pixel besteht, endet das Verfahren. Unter allen insgesamt ausgew"ahlten Pixeln wird der Pixel mit dem maximalen Gewicht als neuer Automatenstandort festgelegt. Nat"urlich muss noch sichergestellt werden, dass kein Pixel ausgew"ahlt wird, sodass sich die Automatenkreise "uberschneiden. 
+
+Dieses Verfahren ist vor allem dann sinnvoll, wenn man annimmt, dass sich Stadtteile mit einer guten Gewichtung nebeneinander befinden. Der Algorithmus betrachtet die Karte zun"achst sehr grob. Die Stellen, die besonders gut aussehen, betrachtet er dann n"aher. Au"serdem kann man davon ausgehen, dass Stadtteile relativ gro"s sind und viele Pixel umfassen. In allen Pixeln eines Stadtteils ist das Gewicht gleich. Deshalb kann man bereits bei einer relativ kleinen Anzahl an Stichproben mit gro"ser Sicherheit einen guten Pixel finden.
+
+\paragraph{Pseudocode}
+Der Algorithmus geht bei der Berechnung nach folgendem Prinzip vor.
+
+\begin{algorithmic}
+\STATE Punkt 1 $\gets (1|1)$
+\STATE Punkt 2 $\gets (\mbox{max}_x|\mbox{max}_y)$
+\STATE Bester Punkt $\gets -1$
+\WHILE{Bereich gro"s genug}
+	\STATE Teil A/B Punkt 1/2 $\gets$ Teile Bereich()
+	\STATE Stichproben$_{A/B} \gets 0$
+	\FOR{$i = 1$ \TO Stichprobengr"o"se}
+		\STATE Punkt$_A \gets$ Stichprobe(Teil A Punkt 1, Teil A Punkt 2)
+		\STATE Punkt$_B \gets$ Stichprobe(Teil B Punkt 1, Teil B Punkt 2)
+		\STATE Stichproben$_A \gets$ Stichproben$_A$ + Bewertung(Punkt$_A$)
+		\STATE Stichproben$_B \gets$ Stichproben$_B$ + Bewertung(Punkt$_B$)
+		\STATE Bester Punkt $\gets \max$ (Punkt$_A$, Punkt$_B$, Bester Punkt)
+	\ENDFOR
+	
+	\IF{Stichproben$_A >$ Stichproben$_B$}
+		\STATE Punkt 1 $\gets$ Teil A Punkt 1
+		\STATE Punkt 2 $\gets$ Teil A Punkt 2
+	\ELSE
+		\STATE Punkt 1 $\gets$ Teil B Punkt 1
+		\STATE Punkt 2 $\gets$ Teil B Punkt 2
+	\ENDIF
+\ENDWHILE
+\RETURN Bester Punkt
+\end{algorithmic}
+Im Pseudocode fehlt die "Uberpr"ufung der Punkte auf G"ultigkeit der "Ubersichtlichkeit halber. Ein Bereich, aus dem Stichproben entnommen werden k"onnen, ist durch zwei Punkte definiert, dem Punkt links oben (Punkt 1) und dem Punkte rechts unten (Punkt 2). Anders als Pseudocode muss die Karte nicht notwendigerweise mit dem Pixel \((1|1)\) beginnen\footnote{Analog zum Greedy-Algorithmus mit vollst"andiger Suche}. Stichproben werden zuf"allig aus dem angegebenen Bereich entnommen.
+
+\paragraph{Laufzeitkomplexit"at}
+Es ist sinnvoll, die Gr"o"se der Stichprobe an die Gr"o"se der Karte zu koppeln, da bei gr"o"seren Karten auch gr"o"sere Stichproben ben"otigt werden. Die Gr"o"se der Stichprobe ergibt sich aus \(s = q \cdot r\), wobei \(r\) die Gr"o"se des Kartenausschnitts (Anzahl der Pixel) und \(q\) das Verh"altnis der zu entnehmenden Pixel bezogen auf den Kartenausschnitt ist. Im ersten Schritt wird die Karte in zwei gleich gro"se Teile geteilt und es werden zweimal (f"ur jeden Kartenausschnitt) \(0,5 \cdot p \cdot q\) Pixel ausgew"ahlt (\(p\) ist die Gr"o"se der Karte). Im n"achsten Durchlauf werden zweimal \(0,25 \cdot p \cdot q\) Pixel ausgew"ahlt. Pro Automat werden also \(\sum_{i=0}^{\infty} 2^{-i} \cdot p \cdot q = 2 \cdot p \cdot q\) Pixel untersucht. Somit untersucht der Algorithmus insgesamt \(\theta(a \cdot 2 \cdot p \cdot q)\) Pixel. In der Implementation des Algorithmus wurde \(q = 0,1\) gesetzt. 
+
+\textbf{Hinweis:} In der Regel ist bereits der Greedy-Algorithmus schnell genug. Beide Greedy-Algorithmen waren bei unseren Tests (vorgegebene Testf"alle) so schnell, dass sich kein wirklicher Unterschied feststellen l"asst. 
+
+\paragraph{Programm-Dokumentation}
+Der Greedy-Algorithmus mit Stichproben-Suche befindet sich ebenfalls in der Klasse \texttt{al"-go"-rith"-men."-Greedy}. Falls der Parameter \texttt{\_stich"-pro"-ben} auf \texttt{true} gesetzt ist, wird der Stichproben-Algorithmus statt der vollst"andigen Suche verwendet. Die Funktion \texttt{Fin"-de"-Bes"-te"-Po"-si"-ti"-on"-Stich"-pro"-ben"-Su"-che} ermittelt die neue Position, an der ein Automat platziert werden soll. Die Abbruchbedingung der \texttt{while}-Schleife ist die "Uberpr"ufung, ob der betrachtete Bereich nur noch aus wenigen Pixeln besteht. Jede entnommene Stichprobe wird automatisch daraufhin untersucht, ob der Pixel besser als alle zuvor untersuchten Pixel ist. Der insgesamt beste entnommene Pixel (Stichprobe) wird als Ergebnis der Funktion zur"uckgegeben. Dadurch, dass der Algorithmus gute Bereiche n"aher untersucht, werden aus diesen guten Bereichen mehr Stichproben entnommen, als aus anderen Bereichen. Es gibt eine Klasse \texttt{Greedy"-Stich"-pro"-be}, die keinen Algorithmus-Quelltext enth"alt, sondern nur die \texttt{Greedy}-Klasse mit den entsprechenden Parametern aufruft. 
+
+\subsubsection{Optimierung durch Verschiebung einzelner Automaten}
+\paragraph{Grundprinzip}
+Dieser Algorithmus f"uhrt eine Abschlussoptimierung einer bestehenden L"osung durch. Es muss also bereits eine L"osung vorliegen. Es wird dann jeder Automat einzeln untersucht und "uberp"uft, ob sich in der unmittelbaren Nachbarschaft des Automaten eine bessere Position befindet. Eine Position ist genau dann besser, wenn sich durch die "Anderung die G"ute der L"osung verbessert.
+
+\paragraph{Pseudocode}
+Der Algorithmus geht bei der Berechnung nach folgendem Prinzip vor.
+
+\begin{algorithmic}
+\STATE $L \gets$ Bestehende L"osung()
+\STATE $G \gets$ G"ute(L)
+\FOR{$i = 1$ \TO 3}
+	\STATE $A \gets$ Mischen(Automaten)
+	\FORALL{$a \in A$}
+		\FORALL{$n \in$ Nachbarschaft(a)}
+			\IF{G"ute(n) $> G$}
+				\STATE $L \gets n$
+				\STATE $G \gets$ G"ute(n)
+			\ENDIF
+		\ENDFOR
+	\ENDFOR
+\ENDFOR
+\RETURN L
+\end{algorithmic}
+Bevor der Algorithmus beginnen kann, ben"otigt er eine bestehende zul"assige L"osung, die zum Beispiel vom Greedy-Algorithmus oder einer Metaheuristik (n"achstes Kapitel) erstellt wurde. Als Vergleichswert wird die G"ute dieser L"osung berechnet. 
+
+Nun folgen drei Durchl"aufe. In jedem Durchlauf werden alle Automaten in zuf"alliger Reihenfolge sequentiell bearbeitet. F"ur jeden Automaten wird die Nachbarschaft generiert, die alle L"osungen enth"alt, bei denen der ausgew"ahlte Automat um bis zu eine Radienbreite in jede Richtung verschoben sein kann. Falls in der Nachbarschaft eine bessere L"osung existiert, wird diese ausgew"ahlt und "ubernommen. Nat"urlich werden nur zul"assige L"osungen akzeptiert, bei denen sich die Automaten nicht "uberschneiden\footnote{Auf die "Uberpr"ufung auf Zul"assigkeit wurde, wie auch bei allen anderen Pseudocodes, der "Ubersichtlichkeit halber im Pseudocode verzichtet.}.
+
+\paragraph{Laufzeitkomplexit"at}
+Die Laufzeit dieses Algorithmus h"angt linear von der Anzahl der Automaten und der Gr"o"se der Nachbarschaft ab. Die "Uberpr"ufung, ob ein Automat an einer zul"assigen Position gesetzt wurde, geht in linearer Zeit (in Abh"angigkeit von \(a\)), da in jedem Schritt nur ein einziger Automat verschoben wird. Wenn der Radius der Automaten \(r\) betr"agt und \(a\) Automaten vorliegen, hat der Algorithmus eine Laufzeit von \(\mathcal{O}(a^2 \cdot 4r^2)\).
+
+\paragraph{Programm-Dokumentation}
+Der Algorithmus befindet sich in der Klasse \texttt{al"-go"-rith"-men."-Ein"-zel"-ver"-schieb"-ung} und implementiert das Interface \texttt{in"-for"-ma"-ti"-cup."-Al"-go"-rith"-mus}. Der eigentliche Algorithmus befindet sich in der Methode \texttt{Be"-rech"-ne}. Um in einem Durchlauf einen zuf"alligen Automaten auszuw"ahlen, wird ein Array \texttt{au"-to"-mat} mit den Indizes der Automaten erstellt. Dieses Array wird von der Funktion \texttt{Mi"-sche"-Array} zuf"allig durcheinandergemischt, indem jedes Element mit einem zuf"alligen Element vertauscht wird. Die genaue Bedeutung der einzelnen Variablen und Funktionen kann dem gut dokumentierten Quelltext entnommen werden. 
+
+\subsection{Metaheuristiken}
+Im Gegensatz zu Heuristiken sind Metaheuristiken nicht auf ein spezifisches Problem beschr"ankt. Sie beschreiben allgemeine Vorgehensweisen zur L"osung von Problemen einer bestimmter Art. Wir haben zwei verschiedene Metaheuristiken - Simulierte Abk"uhlung und Tabu-Suche - implementiert, die beide in etwa nach folgendem Prinzip vorgehen.
+\begin{enumerate}
+\item Ermittle eine Initiall"osung mit einem beliebigem Er"offnungsverfahren.
+\item Durchsuche die (lokale) Nachbarschaft der aktuellen L"osung.
+\item W"ahle die beste gefundene L"osung aus der Nachbarschaft aus.
+\end{enumerate}
+Ein Er"offnungverfahren ist ein erster Algorithmus, der eine zul"assige Anfangsl"osung findet. Je besser diese Anfangsl"osung ist, desto einfacher kann die Metaheuristik sp"ater gute L"osungen finden. Als Er"offnungsverfahren k"onnen beispielweise alle Automaten zuf"allig verteilt werden, sofern diese zuf"allige Verteilung zul"assig ist. Besser ist jedoch, die Initiall"osung mit dem Greedy-Algorithmus zu generieren. 
+
+Die Nachbarschaft einer zul"assigen L"osung ist die Menge von L"osungen, die aus der aktuellen L"osung durch elementare Operationen erzeugt werden k"onnen. Eine elementare Operation k"onnte zum Beispiel das Verschieben eines Automaten um wenige Einheiten sein. 
+
+\subsubsection{Anwendbarkeit von Metaheuristiken}
+Metaheuristiken k"onnen bei unserem Problem angewandt werden, weil es sich um ein kombinatorisches Optimierungsproblem handelt, d.h. die Menge der (g"ultigen) L"osungen ist diskret und aufz"ahlbar. Durch elementare Operationen, wie z.B. das Verschieben eines Automaten, kann jede L"osung, also auch eine optimale L"osung, erreicht werden.
+
+Laufzeitprobleme k"onnen sich dann ergeben, wenn die lokale Nachbarschaft einer L"osung zu gro"s ist, um alle Nachbarn zu "uberpr"ufen. Deshalb betrachten die implementierten Metaheuristiken immer nur eine zuf"allig ausgew"ahlte Teilmenge der Nachbarschaft. 
+
+Die G"ute der durch die Metaheurisitik gefundenen L"osung kann nicht abgesch"atzt werden. Die gefundene L"osung kann beliebig schlecht sein. W"ahlt man die Parameter (z.B. Temperatur bei Simulierter Abk"uhlung) der Algorithmen g"unstig, so erh"alt man in der Regel sehr gute Ergebnisse.
+
+\subsubsection{Simulierte Abk"uhlung (simulated annealing)}
+\paragraph{Grundprinzip}
+Simulierte Abk"uhlung ist die Nachbildung des physikalisches Prozesses der Abk"uhlung eines Metalles. Anfangs hat das Metall eine sehr hohe Temperatur und die Atome im Metall befinden sich in einem sehr hohen energetischen Zustand. Durch langsame Abk"uhlung k"onnen sich die Atome so neu anordnen, dass ein energiearmer Zustand erreicht wird. K"uhlt man das Metall zu schnell ab, kann es \emph{br"uchig} werden und ist von schlechter Qualit"at. Das Metall befindet sich dann nur in einem lokal minimalen Energiezustand.
+
+Genauso wie das Metall in einen engergie"armeren Zustand "uberf"uhrt wird, soll nun die Initiall"osung in einen energie"armeren Zustand "uberf"uhrt werden. Ein Zustand ist genau dann besonders energiearm, wenn er eine hohe G"ute aufweist. 
+
+\paragraph{Pseudocode}
+Der Algorithmus geht bei der Berechnung nach folgendem Prinzip vor.
+
+\begin{algorithmic}
+\STATE $L \gets$ Er"offnungsverfahren()
+\STATE $E \gets$ Energie(L)
+\STATE $T \gets$ Initialtemperatur()
+\newline
+\WHILE{$T > 0$}
+	\FOR{$i = 1$ \TO Durchl"aufe}
+		\STATE $L_{alt} \gets L$
+		\FOR{$j = 1$ \TO Operationen}
+			\STATE $L \gets$ ElementareOperation(L)
+		\ENDFOR
+		\newline
+		\STATE $E_{neu} \gets$ Energie(L)
+		\STATE $\Delta E \gets E_{neu} - E$
+		\newline
+		\IF{$\Delta E > 0$}
+			\STATE $z \gets$ Zufallszahl(0, 1)
+			\IF{$z \geq e^{\frac{-\Delta E}{T}}$}
+				\STATE $L \gets L_{alt}$
+			\ENDIF
+		\ENDIF
+	\ENDFOR
+	\newline
+	\STATE $T \gets T-1$
+\ENDWHILE
+\RETURN L
+\end{algorithmic}
+Zuerst wird mit einem Er"offnungsverfahren (z.B. Greedy-Algorithmus) eine g"ultig Initiall"osung erzeugt. Eine Bewertungsfunktion weist dieser L"osung dann ein Energieniveau zu. Je besser die L"osung ist, desto niedriger ist die Energie. Der Benutzer hat die M"oglichkeit, die Initialtemperatur beliebig festzulegen. Bei h"oheren Temperaturen dauert die Berechnung l"anger, jedoch wird auch das Ergebnis besser.
+
+In jedem Durchlauf der While-Schleife wird die Temperatur nun um eine Einheit erniedrigt. Erst wenn die Temperatur auf Null ist, terminiert der Algorithmus: Das System ist \emph{gefroren}. F"ur jede Temperatur wird nun eine bestimmte Anzahl an \emph{Durchl"aufen} durchgef"uhrt. Jeder Durchlauf entspricht dem Generieren eines Nachbarn. Dazu wird eine bestimmte Anzahl an elementaren Operationen ausgef"uhrt. Je h"oher diese Anzahl an elementaren Operationen ist, desto weiter kann der Nachbar von der Ausgangsl"osung entfernt sein. Jedoch steigt dann auch die Wahrscheinlichkeit, dass unzul"assige L"osungen generiert werden, sodass effektiv weniger Durchl"aufe stattfinden. Der Einfachheit halber wird im Pseudocode davon ausgegangen, dass nur zul"assige L"osungen generiert werden k"onnen. 
+
+Es wird nun das Energieniveau der neuen L"osung und die Abweichung gegen"uber der vorherigen L"osung berechnet. Falls dieser Delta-Wert gr"o"ser als Null ist, hat sich die L"osung verbessert und sie wird akzeptiert. Wurde die L"osung jedoch schlechter, so wird sie nur mit einer gewissen Wahrscheinlichkeit angenommen. Die Metropolis-Regel besagt, dass die schlechtere L"osung nur mit einer Wahrscheinlichkeit von \(e^{\frac{-\Delta E}{T}}\) (Akzeptierungsfunktion) akzeptiert wird. W"urde man nur bessere L"osungen akzeptieren, w"urde der Algorithmus ziemlich sicher in einem lokalen Energieminimum steckenbleiben. 
+
+Die Akzeptierungsfunktion bildet auf einen Bereich zwischen \(0\) und \(1\) ab. Um mit der Wahrscheinlichkeit der Akzeptierungsfunktion zu akzeptieren, wird eine Zufallszahl zwischen \(0\) und \(1\) gebildet. Ist die Zufallszahl kleiner als der Wert der Akzeptiertungsfunktion wird akzeptiert. Ansonsten werden alle elementaren Operationen im aktuellen Durchlauf r"uckg"angig gemacht. Nach einigen Durchl"aufen wird die Temperatur erniedrigt. 
+
+\paragraph{Verbesserungen und Erweiterungen}
+Der Algorithmus wurde um einige Ideen erweitert, um ihn leistungsf"ahiger zu machen.
+\begin{itemize}
+\item \textbf{Variable Gr"o"se der elementaren Operationen.} Es ist m"oglich, die Gr"o"se der elementaren Operationen, also der Verschiebungen der Automaten, von der Temperatur abh"angig zu machen. So werden dann die Automaten bei einer hohen Temperatur st"arker verschoben als bei einer niedrigeren Temperatur, was der Anschauung gen"ugt, dass sich die Atome im Metall bei hoher Temperatur schneller bewegen. 
+\item \textbf{Mehrfache Anwendung des Algorithmus.} Verschiedene Probleminstanzen erfordern ggf. verfschiedene Parameter. Deshalb wird der Algorithmus nach der ersten Ausf"uhrung bei niedrigerer Initialtemperatur nochmals mehrere Male aufgerufen. Parameter wie die Anzahl der Durchl"aufe, die Anzahl der elementaren Operationen oder die Berechnung der elementaren Operationen in Abh"angigkeit von der Temperatur werden dabei variiert.
+\item \textbf{Speichern der global besten L"osung.} Unter allen Aufrufen des Algorithmus und allen tempor"ar generierten L"osungsvorschl"agen (bei jeder Temperatur) wird die beste gefundene L"osung gespeichert. Es ist jedoch sehr wahrscheinlich, dass die gefundene L"osung nach Anwendung des Algorithmus ohnehin die \emph{global} beste gefundene L"osung ist.
+\end{itemize}
+
+\paragraph{Generieren der Nachbarn}
+Jeder Durchlauf entspricht dem Generieren eines Nachbarn. In jedem Durchlauf wird eine bestimmte Anzahl an elementaren Operationen ausgef"uhrt. Eine elementare Operation ist das Verschieben eines einzigen Automaten um einen zuf"alligen Wert. H"angt die Gr"o"se der elementaren Operationen nicht von der Temperatur ab, betr"agt die maximale Verschiebung in x-Richtung\footnote{y-Richtung analog} \(max_{x} = \frac{6 \cdot \mbox{Welt Breite}}{100}\). Soll die Verschiebung dagegen in Abh"angigkeit von der Temperatur erfolgen, so betr"agt die maximale Verschiebung in x-Richtung \(max_{x} = \frac{10 \cdot T \cdot \mbox{Welt Breite}}{100 \cdot {T_{initial}}}\). Die tats"achliche Verschiebung in x-Richtung ist ein zuf"alliger Wert zwischen \(-max_x\) und \(max_x\).
+
+\paragraph{Laufzeitkomplexit"at}
+Das Laufzeitverhalten des Algorithmus h"angt linear von der Initialtempertur, der Anzahl der Durchl"aufe und der Anzahl der Operationen ab. Die "Uberpr"ufung, ob ein L"osungsvorschlag zul"assig ist, geht in \(\mathcal{O}(a^2)\), da jeder Automat mit jedem anderen Automaten verglichen\footnote{Vergleich des Abstandes} werden muss. Die G"ute einer L"osung kann in \(\mathcal{O}(a)\) ermittelt werden, da dazu nur jede Automatenposition in der Gewichtskarte nachgeschlagen werden muss. Somit ergibt sich insgesamt ein Laufzeitverhalten von \(\mathcal{O}(T \cdot \mbox{Durchl"aufe} \cdot \mbox{Operationen} \cdot a^2)\).
+
+\paragraph{Programm-Dokumentation}
+Der Abk"uhlungs-Algorithmus befindet sich in der Klasse \texttt{Ab"-kuehl"-ung} und implementiert das Interface \texttt{in"-for"-ma"-ti"-cup."-Al"-go"-rith"-mus}. Wenn die Methode \texttt{Berechne} aufgerufen wird, wird das Berechnungsverfahren gestartet. Der eigentliche Algorithmus wird dann mehrere Male aufgerufen, wobei Parameter wie die Anzahl der Durchl"aufe oder die Anzahl der Ver"anderungen pro Durchlauf ver"andert werden. Wenn die Methode \texttt{Optimiere} aufgerufen wird, startet die Simulierte Abk"uhlung. Die Methode \texttt{Ele"-men"-ta"-re"-Oper"-ation"-en} wird verwendet, um einen neuen Nachbarn (ein Durchlauf) zu erzeugen. \texttt{BerechneZustandsGuete} berechnet die G"ute (nicht Energie!) des akutellen Zustandes und wurde so auch in anderen Algorithmen "ubernommen. Bei der Methode \texttt{Ak"-zep"tiere"-Aen"-der"-ung} muss beachtet werden, dass sich die Energiedifferenz zweier Zust"ande aus der invertierten Differenz der G"ute \(-(\mbox{neue G"ute} - \mbox{alte G"ute})\) ergibt, weil das Energieniveau umso niedriger ist, je h"oher die G"ute ist. Die genaue Bedeutung und Verwendung der einzelnen Variablen kann dem gut kommentierten Quelltext entnommen werden.
+
+\subsubsection{Tabu-Suche}
+\paragraph{Grundprinzip}
+Tabu-Suche ist eine Metaheuristik, die in jedem Schritt die bestm"ogliche zul"assige L"osung in der Nachbarschaft sucht und akzeptiert. Ziel ist es, eine L"osung mit einer m"oglichst hohen G"ute zu finden. Um nicht in lokalen Maxima stecken zu bleiben und um nicht \emph{im Kreis} zu laufen, werden in einer Tabu-Liste die letzten bereits besuchten L"osungen gespeichert. Diese L"osung sind von nun an \emph{tabu} und d"urfen nicht mehr besucht werden. Es wird immer die beste gefundene L"osung in der Nachbarschaft akzeptiert, unabha"angig davon, ob die aktuelle L"osung dadurch besser oder schlechter wird. W"urde man keine Tabu-Liste anlegen, w"are es beispielsweise denkbar, dass die aktuelle L"osung \(X\) einen besten Nachbarn \(Y\) hat, der jedoch schlechter als \(X\) ist. Dennoch w"urde der Algorithmus nun \(Y\) w"ahlen. Im n"achsten Schritt k"onnte der beste Nachbar erneut \(X\) sein. W"urde man nun \(X\) erlauben, h"atte man einen endlosen Kreis \(X\), \(Y\), \(X\), \(Y\), \(\ldots\). 
+
+\paragraph{Pseudocode}
+Der Algorithmus geht bei der Berechnung nach folgendem Prinzip vor.
+
+\begin{algorithmic}
+\STATE $L \gets$ Er"offnungsverfahren()
+\STATE $G \gets$ G"ute(L)
+\STATE $T \gets$ ()
+\STATE $Beste \gets L$
+\newline
+\FOR{$i = 1$ \TO Iterationen}
+	\REPEAT
+		\STATE $L_{neu} \gets$ N"achste beste L"osung()
+	\UNTIL{$L_{neu} \not \in T$}
+	\newline
+	\STATE $Beste \gets \max(Beste, L_{neu})$
+	\STATE F"uge $L_{neu}$ zu $T$ hinzu
+	\STATE Entferne alte Elemente aus $T$
+\ENDFOR
+\RETURN Beste
+\end{algorithmic}
+Der erste Schritt besteht im Generieren einer g"ultigen Initiall"osung durch ein Er"offnungsverfahren. Die G"ute der L"osung wird ebenfalls ermittelt und gespeichert. Au"serdem wird eine leere Tabu-Liste angelegt und die Variable f"ur beste bisher gefundene L"osung auf die Initiall"osung gesetzt.
+
+Es wird nun eine bestimmte Anzahl an Iterationen ausgef"uhrt, die vom Benutzer beliebig festgelegt werden kann. In jeder Iteration wird zun"achst der beste zul"assige Nachbar gesucht. Ein Nachbar ist genau dann zul"assig wenn er gem"a"s Kapitel \emph{G"ute einer L"osung} zul"assig ist und nicht auf der Tabu-Liste auftaucht. Dieser beste zul"assige Nachbar wird dann auf die Tabu-Liste gesetzt und ggf. in die Variable f"ur die beste bisher gefundene L"osung gespeichert. Es ist sinnvoll, die Gr"o"se der Tabu-Liste zu beschr"anken, um ein (konstant) besseres Laufzeitverhalten zu erhalten. Wird die Tabu-Liste zu gro"s, werden die "altesten Elemente in der Liste entfernt. 
+
+Implementiert man den Algorithmus genau so, wie eben beschrieben, l"auft der Algorithmus relativ langsam, weil die Menge der Nachbarn sehr gro"s ist. Nachbarn sind alle diejenigen L"osungen, bei denen ein einziger Automat horizontal, vertikal oder horizontal und vertikal um maximal den Durchmesser der Automaten verschoben ist. Die Berechnung dauert besonders lange, weil viele Iterationen durchgef"uhrt werden sollen. Deshalb wurde der Algorithmus leicht abge"andert. In jeder Iteration wird ein Automat zuf"allig bestimmt. Dann werden nur diejenigen Nachbarn generiert, die Verschiebungen des ausgew"ahlten Automaten darstellen. Ein Eintrag in der Tabu-Liste enth"alt au"serdem nur die Information, welcher Automat verschoben wurde und in welche Richtung der Automat verschoben wurde. Eine Nachbar ist genau dann tabu, wenn die inverse Operation in der Tabu-Liste auftaucht. So darf man beispielsweise einen Automaten \(X\) nicht zuerst um \((5|1)\) verschieben und im sp"ater um \((-5|-1)\) verschieben, solange sich diese Operation auf der Tabu-Liste befindet. Die L"ange der Tabu-Liste wird auf ein Zehntel der Anzahl der Iterationen gesetzt. 
+
+\paragraph{Laufzeitkomplexit"at}
+Das Laufzeitverhalten des Algorithmus h"angt linear von der Anzahl der Iterationen, der L"ange der Tabu-Liste und der Gr"o"se der Nachbarschaft ab. Wenn ein Automat den Radius \(r\) aufweist, besteht die Nachbarschaft aus maximal \(4r \cdot 4r = 16 \cdot r^2\) Elementen. Um einen Nachbarn auf G"ultigkeit zu "uberpr"ufen, sind dieses Mal nur \(a\) Tests notwendig, da nur ein einziger Automat verschoben wurde. Wenn die Gr"o"se der Tabu-Liste \(\frac{1}{10} \cdot \mbox{Iterationen}\) betr"agt, ergibt sich ein Laufzeitverhalten von \(\mathcal{O}(\frac{1}{10} \mbox{Iterationen}^2 \cdot 16r^2 \cdot a)\).
+
+\paragraph{Programm-Dokumentation}
+Der Tabu-Algorithmus befindet sich in der Klasse \texttt{al"-go"-rith"-men."-tabu} und implementiert, wie auch der Abk"uhlungs-Algorithmus, das Interface \texttt{in"-for"-ma"-ti"-cup."-Al"-go"-rith"-mus}. Die Methode \texttt{Op"-ti"-mi"-ere} enth"alt den eigentlichen Algorithmus. Die Funktion \texttt{Ge"-ner"-iere"-Nach"-bar"-schafts"-L"os"-ung} wertet den aktuellen Zustand aus und generiert f"ur einen zuf"allig ausgew"ahlten Automaten die beste zul"assige L"osung in der Nachbarschaft, die nicht tabu ist. Der R"uckgabewert der Funktion ist eine Instanz der Klasse \texttt{Aen"-der"-ungs"-vor"-schlag}, die nur die "Anderung gegen"uber dem aktuellen Zustand enth"alt. Es wird also nur gespeichert, welcher Automat um wie viele Pixel verschoben wurde. Zusammen mit dem aktuellen Zustand kann daraus der neue Zustand berechnet werden. Au"serdem wird die G"ute der des neuen Zustandes mit der "Anderung gespeichert. Ist dieser Wert w"ahrend der Berchnung einmal \(-1\), so ist der "Anderungsvorschlag entweder nicht zul"assig oder tabu. Die Tabu-Liste ist eine verkettete Liste, die mit einem \texttt{List"-Iter"-ator} in linearer Zeit durchsucht werden kann. Das Entfernen des letzten Elements und das Einf"ugen eines neuen Elements am Anfang ist in konstanter Zeit m"oglich. 
+
+\subsection{Fest positionierte Automaten}
+Es besteht die M"oglichkeit, dass der Benutzer Automaten selbst platzieren kann. Diese Automaten werden bei der Anwendung von Algorithmen (ausgenommen Backtracking) nicht gel"oscht oder verschoben. Dazu gibt es in der Klasse \texttt{Au"-to"-mat} ein Feld \texttt{\_au"-to"-mat"-Ge"-sperrt}. Wenn diese Variable auf \texttt{true} steht, wird der Automat von den Algorithmen nicht beachtet. Das hei"st, vor jeder Operation auf den Automaten wird gepr"uft, ob der Automat gesperrt ist oder nicht. Falls er gesperrt ist, werden keine "Anderungen vorgenommen. Nat"urlich werden gesperrte Automaten aber zur G"ultigkeitspr"ufung herangezogen. Es kann also nicht vorkommen, dass sich irgendein Automat mit einem gesperrten Automat "uberschneidet, es sei denn, der Benutzer platziert zwei gesperrte Automaten so, dass sie sich "uberschneiden.

@@ -1,0 +1,27 @@
+\section{Typischer Programmablauf}
+Ein typischer Programmablauf mit Anwendung der Algorithmen und Generieren einer Ausgabedatei sieht wie folgt aus.
+\begin{enumerate}
+\item Benutzer l"adt eine Eingabedatei durch Ausw"ahlen einer Datei im Dateiauswahl-Dialog.
+\begin{enumerate}
+\item Parser liest die Eingabedatei ein und erzeugt eine \texttt{Welt} (\texttt{in"-for"-ma"-ti"-cup."-create"-Calc"-Frame."-start"-Parsing}).
+\item Attribute werden aus der \texttt{Welt} ausgelesen und in die Tabelle hinzugef"ugt (\texttt{in"-for"-ma"-ti"-cup."-create"-Calc"-Frame."-load"-File})
+\end{enumerate}
+\item Benutzer gewichtet die Attribute in der Tabelle (optional).
+\item Benutzer startet den Berechnungvorgang (\texttt{in"-for"-ma"-ti"-cup."-In"-for"-ma"-ti"-cup"-View."-start"-Cal"-cu"-lation}).
+\begin{enumerate}
+\item Gewichtung der einzelnen Attribute wird ausgewertet und die Stadtteile erhalten ihr Gewicht \texttt{\_ge"-wicht"-Nach"-Fkt} (\texttt{in"-for"-ma"-ti"-cup."-create"-Calc"-Frame."-be"-rei"-te"-Be"-rech"-nung"-Vor}).
+\item Parameter und ausgew"ahlte Algorithmen werden ausgewertet, Variablen werden gesetzt (\texttt{in"-for"-ma"-ti"-cup."-In"-for"-ma"-ti"-cup"-View."-start"-Cal"-cu"-lation}), neuer Task f"ur die Berechnung wird erstellt (\texttt{in"-for"-ma"-ti"-cup."-In"-for"-ma"-ti"-cup"-View."-Start"-Cal"-cu"-lation"-Task."-do"-In"-Back"-ground}).
+\item Koordinaten werden approximiert/skaliert (\texttt{in"-for"-ma"-ti"-cup."-Welt"-funk"-ti"-on."-Approx"-i"-ma"-ti"-on}).
+\item Wenn kein Algorithmus ausgew"ahlt wurde und die Karte nur gezeichnet werden soll: Neuer \texttt{Zu"-stand} wird erstellt, das hei"st, bereits gesetzte Automaten werden verworfen.
+\item Pixelkarte wird erstellt (\texttt{in"-for"-ma"-ti"-cup."-Welt"-funk"-ti"-on."-er"-stelle"-Pix"-el"-kar"-te}).
+\item Wenn bisher noch kein \texttt{Zu"-stand} existiert: Erstelle neuen \texttt{Zu"-stand}. Bestehende Automaten werden nicht gel"oscht.
+\item Gewichtskarte wird erzeugt (\texttt{in"-for"-ma"-ti"-cup."-da"-ten"-struk"-tur."-Zu"-stand."-er"-zeu"-ge"-Ge"-wichts"-kar"-te}).
+\item F"uhre Er"offnungsalgorithmus aus (Greedy, Greedy mit Strichproben, Zufall oder Backtracking).
+\item F"uhre Optimierungsalgorithmus aus (Simulierte Abk"uhlung, Tabu-Suche, und/oder Einzelverschiebung).
+\item Zeichne die L"osung (Klasse \texttt{in"-for"-ma"-ti"-cup."-draw"-ing"-Panel}).
+\end{enumerate}
+\item Benutzer speichert die L"osung (\texttt{in"-for"-ma"-ti"-cup."-Da"-tei"-ex"-port."-da"-tei"-Aus"-ge"-ben}).
+\end{enumerate}
+
+\input{Programmablauf/einausgabe}
+\input{Programmablauf/weltfunktion}

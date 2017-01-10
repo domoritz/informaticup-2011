@@ -1,0 +1,7 @@
+\subsection{Stadtteil}
+Die Klasse \texttt{in"-for"-ma"-ti"-cup."-da"-ten"-struk"-tur."-Stadt"-teil} wird f"ur die Speicherung der Stadtteile verwendet. F"ur jeden Stadtteil werden die Name und Werte der einzelnen Attribute gespeichert, sowie die Eckpunkt der Polygone, die den Stadtteil abgrenzen, wobei diese Punkte Koordinaten auf der Pixelkarte sind. Das Gewicht eines Stadtteils, das aus der Gewichtung der Attribute ergibt, wird in der Variable \texttt{\_ge"-wicht"-Nach"-Fkt} gespeichert.
+
+Der einzige Berechnungsschritt in dieser Klasse ist die Berechnung der Fl"ache des Polygons (Methode \texttt{be"-rech"-ne"-Ne"-ben"-effek"-te}). Diese ergibt sich nach der gau"sschen Trapezformel.
+\begin{equation}2 A=\sum_{i=1}^n (y_i + y_{i+1})(x_i-x_{i+1})\end{equation}
+Die Laufzeit dieses Berechnungsschrittes h"angt linear von der Anzahl der Punkte eines Polygons ab.
+

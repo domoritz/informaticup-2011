@@ -1,0 +1,10 @@
+\section{"Ubersicht "uber die Programmoberfl"ache}
+Dieses Kapitel beschreibt, wie die GUI in Java technisch umgesetzt wurde und ist bewusst kurz gehalten, da sie f"ur die meisten \emph{Leser} wohl eher von uninteressant ist. Beim Entwurf der Oberfl"ache versuchten wir, die folgenden Grunds"atze so gut wie m"oglich zu beachten.
+\begin{itemize}
+\item \textbf{Zweisprachigkeit:} Das Programm enth"alt eine englischsprachige sowie eine deutschsprachige "Ubersetzung der meisten GUI-Texte. Dies wurde "uber Ressourcen-Dateien (\texttt{in"-for"-ma"-ti"-cup."-res"-ources.*}) gel"ost. 
+\item \textbf{Falsche Bedienung vermeiden:} So weit es m"oglich ist, werden falsche Eingaben durch den Benutzer erst gar nicht erlaubt. So kann der Benutzer beispielsweise die Berechnung erst gar nicht starten, wenn er einen ung"ultigen Wert f"ur die Temperatur eingibt. Au"serdem kann er Automaten nicht so platzieren, dass eine ung"ultiger Zustand entsteht.
+\item \textbf{Trennung von GUI und Algorithmus:} Durch die Aufteilung in Packages und verschiedene Klassen ist uns das relativ gut gelungen. Lediglich die Klasse \texttt{in"-for"-ma"-ti"-cup."-In"-for"-ma"-ti"-cup"-View} enth"alt die Steuerung des Programmablaufes. Dort werden zum Beispiel Parameter f"ur die Algorithmen ausgewertet und die einzelnen Berechnungsschritte (z.B. Algorithmen) angest"osen. Dadurch konnten wir uns jedoch Arbeit sparen, weil oft auf Parameter-Werte aus der GUI zur"uckgegriffen werden muss.
+\end{itemize}
+
+\input{GUI/hauptfenster}
+\input{GUI/nebenfenster}

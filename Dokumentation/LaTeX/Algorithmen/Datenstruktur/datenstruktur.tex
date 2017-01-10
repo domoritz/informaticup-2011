@@ -1,0 +1,17 @@
+\section{Datenstruktur}
+\subsection{Grunds"atzliches in aller K"urze}
+\begin{itemize}
+\item \textbf{Approximationsrate:} Um schneller an Ergebnisse zu kommen, werden Karten verkleinert und somit sind weniger Daten zu verarbeiten.
+\item \textbf{Automat, Stadtteil, Koordinate:} Klassen, in welchen die wichtigsten Daten der einzelnen Automaten, Stadtteile, Koordinaten gespeichert sind.
+\item \textbf{Karte:} Karte, die aus einzelnen Pixeln besteht, und f"ur jeden Pixel einen Wert enth"alt.
+\item \textbf{Welt:} Speichert die wichtigsten Parameter, wie die einzelnen Stadtteile, die Pixelkarte, den Radius der Automaten oder die Anzahl der Automaten, jedoch keine L"osung des Problems. Die Positionen der einzelnen Automaten werden hier also \emph{nicht} gespeichert.
+\item \textbf{Zustand:} Ausgehend von einer Welt wird hier gespeichert, wo die Automaten stehen und welches Gewicht sie haben.
+\end{itemize}
+
+\input{Datenstruktur/automat}
+\input{Datenstruktur/koordinate}
+\input{Datenstruktur/pixelkarte}
+\input{Datenstruktur/stadtteil}
+\input{Datenstruktur/welt}
+\input{Datenstruktur/gewichtskarte}
+\input{Datenstruktur/zustand}
